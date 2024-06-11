@@ -3,8 +3,18 @@
 # Function to check if a command exists and install it if it doesn't
 check_and_install() {
     if ! command -v $1 &> /dev/null; then
-        echo "$1 not found. Installing..."
-        pip3 install $1
+        echo "Installing $1..."
+        pip3 install $1 &> /dev/null &
+
+        # Simple progress indicator
+        pid=$!
+        while kill -0 $pid 2> /dev/null; do
+            for i in '/' '-' '\' '|'; do
+                echo -ne "\r$i"
+                sleep 0.1
+            done
+        done
+        echo "\r$1 installation complete!"
     else
         echo "$1 is already installed."
     fi
@@ -56,7 +66,9 @@ python3 -m venv safe_clone
 source safe_clone/bin/activate
 
 # Install necessary tools within the virtual environment
-pip install bandit safety pip-audit
+check_and_install bandit
+check_and_install safety
+check_and_install pip-audit
 
 # Run Bandit
 echo "Running Bandit..."
