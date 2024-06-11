@@ -1,3 +1,6 @@
+# ignore the repo I test with
+pyrh
+
 # Ignore the virtual environment directory
 safe_clone/
 
