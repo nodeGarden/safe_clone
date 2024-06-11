@@ -12,24 +12,42 @@ check_and_install() {
 
 # Ensure a repository URL is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 <github-repo-url>"
+    echo "Usage: $0 <github-repo-url> [--cache]"
     exit 1
 fi
 
-# Clone the repository
+# Parse arguments
 repo_url=$1
+cache_flag=$2
 repo_name=$(basename "$repo_url" .git)
 
-# Remove existing repository folder if it exists
-if [ -d "$repo_name" ]; then
-    echo "Removing existing repository folder '$repo_name'..."
-    rm -rf "$repo_name"
+# Handle the --cache flag
+if [ "$cache_flag" != "--cache" ]; then
+    # Remove existing repository folder if it exists
+    if [ -d "$repo_name" ]; then
+        echo "Removing existing repository folder '$repo_name'..."
+        rm -rf "$repo_name"
+    fi
+
+    # Clone the repository
+    git clone "$repo_url" || { echo "Failed to clone repository"; exit 1; }
+else
+    # If --cache flag is set, check if the directory exists and pull the latest changes
+    if [ -d "$repo_name" ]; then
+        echo "Repository folder '$repo_name' exists. Pulling latest changes..."
+        cd "$repo_name" || { echo "Failed to enter repository directory"; exit 1; }
+        git pull || { echo "Failed to pull latest changes"; exit 1; }
+    else
+        # If the directory does not exist, clone the repository
+        git clone "$repo_url" || { echo "Failed to clone repository"; exit 1; }
+        cd "$repo_name" || { echo "Failed to enter repository directory"; exit 1; }
+    fi
 fi
 
-git clone "$repo_url" || { echo "Failed to clone repository"; exit 1; }
-
-# Change directory to the cloned repository
-cd "$repo_name" || { echo "Failed to enter repository directory"; exit 1; }
+# Change directory to the cloned repository (if not already there)
+if [ "$cache_flag" != "--cache" ] || [ ! -d "$repo_name" ]; then
+    cd "$repo_name" || { echo "Failed to enter repository directory"; exit 1; }
+fi
 
 # Create a virtual environment named 'safe_clone'
 python3 -m venv safe_clone

@@ -7,7 +7,7 @@ This project provides a shell script to clone a GitHub repository, install neces
 The `safe_clone.sh` script performs the following actions:
 
 1. Clones a specified GitHub repository.
-2. Removes any existing directory of the repository to avoid conflicts.
+2. Optionally removes any existing directory of the repository to avoid conflicts (unless the `--cache` flag is provided).
 3. Creates and activates a Python virtual environment named `safe_clone`.
 4. Installs `bandit`, `safety`, and `pip-audit` within the virtual environment.
 5. Runs these tools to scan the repository for common security issues.
@@ -41,10 +41,10 @@ The `safe_clone.sh` script performs the following actions:
     ```
 3. Run the script by providing a GitHub repository URL as an argument:
     ```sh
-    ./safe_clone.sh <github-repo-url>
+    ./safe_clone.sh <github-repo-url> [--cache]
     ```
 
 ### Example
 
 ```sh
-./safe_clone.sh https://github.com/robinhood-unofficial/pyrh.git
+./safe_clone.sh https://github.com/robinhood-unofficial/pyrh.git --cache
