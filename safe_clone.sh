@@ -70,19 +70,19 @@ check_and_install bandit
 check_and_install safety
 check_and_install pip-audit
 
-# Run Bandit and save output to a log file
+# Run Bandit and save output to a log file, suppressing console output
 echo "Running Bandit..."
-bandit -r . > bandit_output.log
+bandit -r . > bandit_output.log 2>&1
 echo "Bandit scan completed. Check bandit_output.log for details."
 
-# Run Safety and save output to a log file
+# Run Safety and save output to a log file, suppressing console output
 echo "Running Safety..."
-safety check > safety_output.log
+safety check > safety_output.log 2>&1
 echo "Safety scan completed. Check safety_output.log for details."
 
-# Run pip-audit and save output to a log file
+# Run pip-audit and save output to a log file, suppressing console output
 echo "Running pip-audit..."
-pip-audit > pip_audit_output.log
+pip-audit > pip_audit_output.log 2>&1
 echo "pip-audit scan completed. Check pip_audit_output.log for details."
 
 # Deactivate the virtual environment
